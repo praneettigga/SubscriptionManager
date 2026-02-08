@@ -110,8 +110,8 @@ function Subscriptions({ subscriptions, loading, onDelete, onAddClick }) {
                             key={filter}
                             onClick={() => setActiveFilter(filter)}
                             className={`px-4 py-2 rounded-xl font-medium transition-colors capitalize ${activeFilter === filter
-                                    ? 'bg-primary-600 text-white'
-                                    : 'bg-surface-800 text-zinc-400 hover:bg-zinc-700'
+                                ? 'bg-primary-600 text-white'
+                                : 'bg-surface-800 text-zinc-400 hover:bg-zinc-700'
                                 }`}
                         >
                             {filter}
@@ -225,17 +225,17 @@ function Subscriptions({ subscriptions, loading, onDelete, onAddClick }) {
                                         <div className="flex justify-between">
                                             <span className="text-zinc-500 text-sm">Cost</span>
                                             <span className="text-white font-medium">
-                                                ${sub.cost}/{sub.billing_cycle === 'yearly' ? 'yr' : 'mo'}
+                                                ₹{sub.cost}/{sub.billing_cycle === 'yearly' ? 'yr' : 'mo'}
                                             </span>
                                         </div>
                                         <div className="flex justify-between">
                                             <span className="text-zinc-500 text-sm">Next Renewal</span>
                                             <span
                                                 className={`font-medium ${daysUntil !== null && daysUntil <= 3
-                                                        ? 'text-rose-400'
-                                                        : daysUntil !== null && daysUntil <= 7
-                                                            ? 'text-amber-400'
-                                                            : 'text-white'
+                                                    ? 'text-rose-400'
+                                                    : daysUntil !== null && daysUntil <= 7
+                                                        ? 'text-amber-400'
+                                                        : 'text-white'
                                                     }`}
                                             >
                                                 {nextRenewal
@@ -247,8 +247,8 @@ function Subscriptions({ subscriptions, loading, onDelete, onAddClick }) {
                                             <span className="text-zinc-500 text-sm">Status</span>
                                             <span
                                                 className={`text-sm px-2 py-0.5 rounded-full ${sub.status === 'canceled'
-                                                        ? 'bg-rose-500/20 text-rose-400'
-                                                        : 'bg-emerald-500/20 text-emerald-400'
+                                                    ? 'bg-rose-500/20 text-rose-400'
+                                                    : 'bg-emerald-500/20 text-emerald-400'
                                                     }`}
                                             >
                                                 {sub.status === 'canceled' ? 'Canceled' : 'Active'}

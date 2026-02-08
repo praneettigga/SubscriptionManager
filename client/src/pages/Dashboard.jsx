@@ -3,7 +3,7 @@ import {
     TrendingUp,
     TrendingDown,
     Calendar,
-    DollarSign,
+    IndianRupee,
     Plus,
     CreditCard,
 } from 'lucide-react';
@@ -95,7 +95,7 @@ function Dashboard({ subscriptions, loading, onAddClick }) {
                 >
                     <div className="flex items-center justify-between mb-4">
                         <div className="w-12 h-12 rounded-xl bg-primary-600/20 flex items-center justify-center">
-                            <DollarSign className="text-primary-400" size={24} />
+                            <IndianRupee className="text-primary-400" size={24} />
                         </div>
                         <span className="flex items-center gap-1 text-sm text-emerald-400">
                             <TrendingUp size={14} />
@@ -104,7 +104,7 @@ function Dashboard({ subscriptions, loading, onAddClick }) {
                     </div>
                     <p className="text-zinc-400 text-sm mb-1">Monthly Spending</p>
                     <p className="text-3xl font-bold text-white">
-                        ${totalMonthly.toFixed(2)}
+                        ₹{totalMonthly.toFixed(2)}
                     </p>
                 </motion.div>
 
@@ -138,7 +138,7 @@ function Dashboard({ subscriptions, loading, onAddClick }) {
                     </div>
                     <p className="text-zinc-400 text-sm mb-1">Yearly Projection</p>
                     <p className="text-3xl font-bold text-white">
-                        ${(totalMonthly * 12).toFixed(2)}
+                        ₹{(totalMonthly * 12).toFixed(2)}
                     </p>
                 </motion.div>
 
@@ -202,13 +202,13 @@ function Dashboard({ subscriptions, loading, onAddClick }) {
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <p className="font-semibold text-white">${sub.cost}</p>
+                                            <p className="font-semibold text-white">₹{sub.cost}</p>
                                             <p
                                                 className={`text-sm ${days <= 3
-                                                        ? 'text-rose-400'
-                                                        : days <= 7
-                                                            ? 'text-amber-400'
-                                                            : 'text-zinc-400'
+                                                    ? 'text-rose-400'
+                                                    : days <= 7
+                                                        ? 'text-amber-400'
+                                                        : 'text-zinc-400'
                                                     }`}
                                             >
                                                 {days} days
@@ -246,7 +246,7 @@ function Dashboard({ subscriptions, loading, onAddClick }) {
                                                 {CATEGORIES[cat]?.label || cat}
                                             </span>
                                             <span className="text-sm text-zinc-400">
-                                                ${amount.toFixed(2)} ({percentage.toFixed(0)}%)
+                                                ₹{amount.toFixed(2)} ({percentage.toFixed(0)}%)
                                             </span>
                                         </div>
                                         <div className="w-full h-2 bg-surface-800 rounded-full overflow-hidden">

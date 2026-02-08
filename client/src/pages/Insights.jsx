@@ -72,7 +72,7 @@ function Insights({ subscriptions }) {
                         description: 'Consider canceling subscriptions you haven\'t used in the last month.',
                     },
                 ],
-                summary: `You're spending $${totalMonthly.toFixed(2)}/month across ${subscriptions.length} subscriptions.`,
+                summary: `You're spending ₹${totalMonthly.toFixed(2)}/month across ${subscriptions.length} subscriptions.`,
             });
         } finally {
             setLoading(false);
@@ -134,7 +134,7 @@ function Insights({ subscriptions }) {
                                 <LineChart data={chartData}>
                                     <CartesianGrid strokeDasharray="3 3" stroke="#3f3f46" />
                                     <XAxis dataKey="month" stroke="#71717a" />
-                                    <YAxis stroke="#71717a" tickFormatter={(v) => `$${v}`} />
+                                    <YAxis stroke="#71717a" tickFormatter={(v) => `₹${v}`} />
                                     <Tooltip
                                         contentStyle={{
                                             backgroundColor: '#18181b',
@@ -142,7 +142,7 @@ function Insights({ subscriptions }) {
                                             borderRadius: '12px',
                                         }}
                                         labelStyle={{ color: '#fafafa' }}
-                                        formatter={(value) => [`$${value.toFixed(2)}`, 'Spending']}
+                                        formatter={(value) => [`₹${value.toFixed(2)}`, 'Spending']}
                                     />
                                     <Line
                                         type="monotone"

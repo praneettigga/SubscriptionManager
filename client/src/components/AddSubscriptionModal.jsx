@@ -167,7 +167,7 @@ function AddSubscriptionModal({ isOpen, onClose, onAdd }) {
                                         </label>
                                         <div className="relative">
                                             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500">
-                                                $
+                                                ₹
                                             </span>
                                             <input
                                                 type="number"
