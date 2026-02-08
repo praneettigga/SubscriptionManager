@@ -4,15 +4,19 @@ import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
 import Subscriptions from './pages/Subscriptions';
 import Insights from './pages/Insights';
+import CalendarPage from './pages/Calendar';
+import Simulator from './pages/Simulator';
 import AddSubscriptionModal from './components/AddSubscriptionModal';
 
 function App() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [subscriptions, setSubscriptions] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [budget, setBudget] = useState(null);
 
     useEffect(() => {
         fetchSubscriptions();
+        fetchSettings();
     }, []);
 
     const fetchSubscriptions = async () => {
@@ -26,6 +30,34 @@ function App() {
             console.error('Error fetching subscriptions:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchSettings = async () => {
+        try {
+            const response = await fetch('/api/settings');
+            if (response.ok) {
+                const data = await response.json();
+                setBudget(data);
+            }
+        } catch (error) {
+            console.error('Error fetching settings:', error);
+        }
+    };
+
+    const updateBudget = async (monthlyBudget) => {
+        try {
+            const response = await fetch('/api/settings', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ monthly_budget: monthlyBudget }),
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setBudget(data);
+            }
+        } catch (error) {
+            console.error('Error updating budget:', error);
         }
     };
 
@@ -72,6 +104,8 @@ function App() {
                                     subscriptions={subscriptions}
                                     loading={loading}
                                     onAddClick={() => setIsModalOpen(true)}
+                                    budget={budget}
+                                    onUpdateBudget={updateBudget}
                                 />
                             }
                         />
@@ -90,6 +124,14 @@ function App() {
                             path="/insights"
                             element={<Insights subscriptions={subscriptions} />}
                         />
+                        <Route
+                            path="/calendar"
+                            element={<CalendarPage subscriptions={subscriptions} />}
+                        />
+                        <Route
+                            path="/simulator"
+                            element={<Simulator subscriptions={subscriptions} />}
+                        />
                     </Routes>
                 </main>
 
@@ -104,3 +146,4 @@ function App() {
 }
 
 export default App;
+

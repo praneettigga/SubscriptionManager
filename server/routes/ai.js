@@ -322,4 +322,105 @@ Be specific and reference their actual subscriptions when possible.`;
     }
 });
 
+// POST /api/ai/alternatives - Get alternative subscription suggestions
+router.post('/alternatives', async (req, res) => {
+    try {
+        const { subscription } = req.body;
+
+        if (!subscription || !subscription.name) {
+            return res.status(400).json({ error: 'Subscription data is required' });
+        }
+
+        // Calculate potential annual savings if switching from monthly
+        let annualSavings = null;
+        if (subscription.billing_cycle === 'monthly') {
+            // Typically 2 months free with annual = ~16.67% savings
+            annualSavings = (subscription.cost * 12 * 0.1667).toFixed(0);
+        }
+
+        // If no API key, provide basic suggestions
+        if (!GROQ_API_KEY) {
+            return res.json({
+                alternatives: [
+                    {
+                        name: 'Generic Alternative',
+                        estimated_cost: Math.floor(subscription.cost * 0.7),
+                        savings: Math.floor(subscription.cost * 0.3),
+                        reason: 'Consider exploring free or lower-cost alternatives in this category.',
+                    },
+                ],
+                bundle_tip: 'Check if any of your other subscriptions offer bundled access to similar services.',
+                annual_savings: annualSavings,
+                annual_tip: annualSavings ? `Switching to annual billing could save you ~₹${annualSavings}/year` : null,
+            });
+        }
+
+        // Use AI for detailed alternatives
+        const systemPrompt = `You are a subscription advisor helping users save money. Given a subscription service, suggest alternatives and savings opportunities. Respond with ONLY a JSON object containing:
+1. "alternatives": An array of 2-3 objects with:
+   - "name": Alternative service name
+   - "estimated_cost": Monthly cost in INR (number)
+   - "savings": Monthly savings vs current service (number)
+   - "reason": Why this is a good alternative (max 80 chars)
+2. "bundle_tip": A tip about bundling opportunities (max 100 chars, or null)
+3. "annual_savings": Estimated yearly savings if switching to annual plan (number, or null)
+4. "annual_tip": Advice about annual billing (max 80 chars, or null)
+
+Focus on real, practical alternatives available in India.`;
+
+        const userPrompt = `Find alternatives for: ${subscription.name} (₹${subscription.cost}/${subscription.billing_cycle}, Category: ${subscription.category})`;
+
+        const compressed = await compressPrompt(systemPrompt, userPrompt);
+
+        const response = await axios.post(
+            `${GROQ_BASE_URL}/chat/completions`,
+            {
+                model: 'llama-3.1-8b-instant',
+                messages: [
+                    { role: 'system', content: compressed.context },
+                    { role: 'user', content: compressed.prompt },
+                ],
+                max_tokens: 500,
+                temperature: 0.5,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${GROQ_API_KEY}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+
+        const aiResponse = response.data.choices[0]?.message?.content;
+        const parsed = parseAIResponse(aiResponse);
+
+        if (parsed && parsed.alternatives) {
+            // Add annual savings if not provided by AI
+            if (!parsed.annual_savings && annualSavings) {
+                parsed.annual_savings = parseInt(annualSavings);
+                parsed.annual_tip = `Switching to annual billing could save you ~₹${annualSavings}/year`;
+            }
+            return res.json(parsed);
+        } else {
+            // Fallback response
+            return res.json({
+                alternatives: [
+                    {
+                        name: 'Free tier options',
+                        estimated_cost: 0,
+                        savings: subscription.cost,
+                        reason: 'Many services offer free tiers with limited features.',
+                    },
+                ],
+                bundle_tip: 'Check for bundle deals that include this service.',
+                annual_savings: annualSavings,
+                annual_tip: annualSavings ? `Annual billing could save ~₹${annualSavings}/year` : null,
+            });
+        }
+    } catch (error) {
+        console.error('AI alternatives error:', error.response?.data || error.message);
+        res.status(500).json({ error: 'Failed to get alternatives' });
+    }
+});
+
 module.exports = router;

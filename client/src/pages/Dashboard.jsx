@@ -1,12 +1,12 @@
 import { motion } from 'framer-motion';
 import {
     TrendingUp,
-    TrendingDown,
     Calendar,
     IndianRupee,
     Plus,
     CreditCard,
 } from 'lucide-react';
+import BudgetCard from '../components/BudgetCard';
 
 const CATEGORIES = {
     entertainment: { color: '#8b5cf6', label: 'Entertainment' },
@@ -17,9 +17,14 @@ const CATEGORIES = {
     other: { color: '#6b7280', label: 'Other' },
 };
 
-function Dashboard({ subscriptions, loading, onAddClick }) {
+function Dashboard({ subscriptions, loading, onAddClick, budget, onUpdateBudget }) {
+    // Calculate total monthly spending (accounting for shared subscriptions)
     const totalMonthly = subscriptions.reduce((sum, sub) => {
-        const cost = sub.billing_cycle === 'yearly' ? sub.cost / 12 : sub.cost;
+        let cost = sub.billing_cycle === 'yearly' ? sub.cost / 12 : sub.cost;
+        // Divide by number of people if shared
+        if (sub.is_shared && sub.shared_with > 1) {
+            cost = cost / sub.shared_with;
+        }
         return sum + cost;
     }, 0);
 
@@ -161,6 +166,13 @@ function Dashboard({ subscriptions, loading, onAddClick }) {
                             : 'N/A'}
                     </p>
                 </motion.div>
+
+                {/* Budget Card */}
+                <BudgetCard
+                    budget={budget}
+                    totalSpending={totalMonthly}
+                    onUpdateBudget={onUpdateBudget}
+                />
             </div>
 
             {/* Bottom Grid */}

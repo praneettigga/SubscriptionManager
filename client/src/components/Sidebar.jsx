@@ -4,6 +4,8 @@ import {
     LayoutDashboard,
     CreditCard,
     Sparkles,
+    Calendar,
+    Calculator,
     Plus,
     Settings,
 } from 'lucide-react';
@@ -11,6 +13,8 @@ import {
 const navItems = [
     { path: '/', icon: LayoutDashboard, label: 'Dashboard' },
     { path: '/subscriptions', icon: CreditCard, label: 'Subscriptions' },
+    { path: '/calendar', icon: Calendar, label: 'Calendar' },
+    { path: '/simulator', icon: Calculator, label: 'Simulator' },
     { path: '/insights', icon: Sparkles, label: 'AI Insights' },
 ];
 

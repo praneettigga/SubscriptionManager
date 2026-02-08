@@ -40,7 +40,7 @@ router.get('/:id', async (req, res) => {
 // POST new subscription
 router.post('/', async (req, res) => {
     try {
-        const { name, cost, billing_cycle, first_payment_date, category, status } = req.body;
+        const { name, cost, billing_cycle, first_payment_date, category, status, is_shared, shared_with } = req.body;
 
         if (!name || cost === undefined) {
             return res.status(400).json({ error: 'Name and cost are required' });
@@ -56,6 +56,8 @@ router.post('/', async (req, res) => {
                     first_payment_date: first_payment_date || null,
                     category: category || 'other',
                     status: status || 'active',
+                    is_shared: is_shared || false,
+                    shared_with: shared_with || 1,
                 },
             ])
             .select()
@@ -72,7 +74,7 @@ router.post('/', async (req, res) => {
 // PUT update subscription
 router.put('/:id', async (req, res) => {
     try {
-        const { name, cost, billing_cycle, first_payment_date, category, status } = req.body;
+        const { name, cost, billing_cycle, first_payment_date, category, status, is_shared, shared_with } = req.body;
 
         const { data, error } = await supabase
             .from('subscriptions')
@@ -83,6 +85,8 @@ router.put('/:id', async (req, res) => {
                 first_payment_date,
                 category,
                 status,
+                is_shared: is_shared !== undefined ? is_shared : undefined,
+                shared_with: shared_with !== undefined ? shared_with : undefined,
                 updated_at: new Date().toISOString(),
             })
             .eq('id', req.params.id)

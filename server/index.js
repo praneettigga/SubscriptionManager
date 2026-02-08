@@ -12,6 +12,7 @@ app.use(express.json());
 // Routes
 app.use('/api/subscriptions', require('./routes/subscriptions'));
 app.use('/api/ai', require('./routes/ai'));
+app.use('/api/settings', require('./routes/settings'));
 
 // Health check
 app.get('/api/health', (req, res) => {

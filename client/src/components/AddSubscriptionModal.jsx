@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Sparkles, Loader2 } from 'lucide-react';
+import { X, Sparkles, Loader2, Users } from 'lucide-react';
 
 const CATEGORIES = {
     entertainment: 'Entertainment',
@@ -24,6 +24,8 @@ function AddSubscriptionModal({ isOpen, onClose, onAdd }) {
         first_payment_date: '',
         category: 'other',
         status: 'active',
+        is_shared: false,
+        shared_with: 1,
     });
     const [aiSuggesting, setAiSuggesting] = useState(false);
     const [aiTip, setAiTip] = useState('');
@@ -69,6 +71,8 @@ function AddSubscriptionModal({ isOpen, onClose, onAdd }) {
         onAdd({
             ...formData,
             cost: parseFloat(formData.cost),
+            is_shared: formData.is_shared,
+            shared_with: formData.is_shared ? parseInt(formData.shared_with) : 1,
         });
 
         // Reset form
@@ -79,6 +83,8 @@ function AddSubscriptionModal({ isOpen, onClose, onAdd }) {
             first_payment_date: '',
             category: 'other',
             status: 'active',
+            is_shared: false,
+            shared_with: 1,
         });
         setAiTip('');
     };
@@ -237,6 +243,68 @@ function AddSubscriptionModal({ isOpen, onClose, onAdd }) {
                                             </option>
                                         ))}
                                     </select>
+                                </div>
+
+                                {/* Shared Subscription */}
+                                <div className="p-4 bg-surface-800 rounded-xl border border-zinc-700">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <Users size={18} className="text-zinc-400" />
+                                            <div>
+                                                <p className="text-sm font-medium text-white">Shared Subscription</p>
+                                                <p className="text-xs text-zinc-500">Split cost with others</p>
+                                            </div>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => setFormData(prev => ({
+                                                ...prev,
+                                                is_shared: !prev.is_shared,
+                                                shared_with: prev.is_shared ? 1 : 2
+                                            }))}
+                                            className={`relative w-12 h-6 rounded-full transition-colors ${formData.is_shared ? 'bg-primary-600' : 'bg-zinc-700'
+                                                }`}
+                                        >
+                                            <span
+                                                className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${formData.is_shared ? 'left-7' : 'left-1'
+                                                    }`}
+                                            />
+                                        </button>
+                                    </div>
+
+                                    {formData.is_shared && (
+                                        <motion.div
+                                            initial={{ opacity: 0, height: 0 }}
+                                            animate={{ opacity: 1, height: 'auto' }}
+                                            exit={{ opacity: 0, height: 0 }}
+                                            className="mt-4 pt-4 border-t border-zinc-700"
+                                        >
+                                            <label className="block text-sm text-zinc-400 mb-2">
+                                                Split between how many people?
+                                            </label>
+                                            <div className="flex items-center gap-3">
+                                                {[2, 3, 4, 5].map((num) => (
+                                                    <button
+                                                        key={num}
+                                                        type="button"
+                                                        onClick={() => setFormData(prev => ({ ...prev, shared_with: num }))}
+                                                        className={`w-10 h-10 rounded-lg font-medium transition-colors ${formData.shared_with === num
+                                                                ? 'bg-primary-600 text-white'
+                                                                : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600'
+                                                            }`}
+                                                    >
+                                                        {num}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                            {formData.cost && (
+                                                <p className="mt-3 text-sm text-primary-400">
+                                                    Your share: ₹{(parseFloat(formData.cost) / formData.shared_with).toFixed(2)}/
+                                                    {formData.billing_cycle === 'yearly' ? 'yr' : 'mo'}
+                                                </p>
+                                            )}
+                                        </motion.div>
+                                    )}
                                 </div>
 
                                 {/* Submit */}
