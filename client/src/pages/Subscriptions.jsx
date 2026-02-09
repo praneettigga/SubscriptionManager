@@ -19,7 +19,7 @@ const CATEGORIES = {
     other: { color: '#6b7280', label: 'Other' },
 };
 
-function Subscriptions({ subscriptions, loading, onDelete, onAddClick }) {
+function Subscriptions({ subscriptions, loading, onDelete, onEdit, onAddClick }) {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeFilter, setActiveFilter] = useState('all');
     const [categoryFilter, setCategoryFilter] = useState('all');
@@ -68,22 +68,11 @@ function Subscriptions({ subscriptions, loading, onDelete, onAddClick }) {
     return (
         <div className="animate-fade-in">
             {/* Header */}
-            <div className="flex items-center justify-between mb-8">
-                <div>
-                    <h1 className="text-3xl font-bold text-white">Subscriptions</h1>
-                    <p className="text-zinc-400 mt-1">
-                        Manage all your active subscriptions
-                    </p>
-                </div>
-                <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={onAddClick}
-                    className="flex items-center gap-2 bg-primary-600 hover:bg-primary-500 text-white font-medium py-2.5 px-5 rounded-xl transition-colors"
-                >
-                    <Plus size={18} />
-                    Add New
-                </motion.button>
+            <div className="mb-8">
+                <h1 className="text-3xl font-bold text-white">Subscriptions</h1>
+                <p className="text-zinc-400 mt-1">
+                    Manage all your active subscriptions
+                </p>
             </div>
 
             {/* Filters */}
@@ -197,7 +186,13 @@ function Subscriptions({ subscriptions, loading, onDelete, onAddClick }) {
 
                                             {openMenu === sub.id && (
                                                 <div className="absolute right-0 top-full mt-1 w-40 bg-surface-800 border border-zinc-700 rounded-xl overflow-hidden shadow-xl z-10">
-                                                    <button className="flex items-center gap-2 w-full px-4 py-2.5 text-left text-zinc-300 hover:bg-zinc-700 transition-colors">
+                                                    <button
+                                                        onClick={() => {
+                                                            onEdit(sub);
+                                                            setOpenMenu(null);
+                                                        }}
+                                                        className="flex items-center gap-2 w-full px-4 py-2.5 text-left text-zinc-300 hover:bg-zinc-700 transition-colors"
+                                                    >
                                                         <Edit size={16} />
                                                         Edit
                                                     </button>

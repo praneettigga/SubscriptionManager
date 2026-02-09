@@ -13,6 +13,7 @@ function App() {
     const [subscriptions, setSubscriptions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [budget, setBudget] = useState(null);
+    const [editingSubscription, setEditingSubscription] = useState(null);
 
     useEffect(() => {
         fetchSubscriptions();
@@ -91,6 +92,34 @@ function App() {
         }
     };
 
+    const updateSubscription = async (id, subscription) => {
+        try {
+            const response = await fetch(`/api/subscriptions/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(subscription),
+            });
+            if (response.ok) {
+                const updated = await response.json();
+                setSubscriptions(subscriptions.map((s) => s.id === id ? updated : s));
+                setIsModalOpen(false);
+                setEditingSubscription(null);
+            }
+        } catch (error) {
+            console.error('Error updating subscription:', error);
+        }
+    };
+
+    const handleEdit = (subscription) => {
+        setEditingSubscription(subscription);
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setEditingSubscription(null);
+    };
+
     return (
         <Router>
             <div className="flex min-h-screen bg-surface-950">
@@ -116,6 +145,7 @@ function App() {
                                     subscriptions={subscriptions}
                                     loading={loading}
                                     onDelete={deleteSubscription}
+                                    onEdit={handleEdit}
                                     onAddClick={() => setIsModalOpen(true)}
                                 />
                             }
@@ -137,8 +167,10 @@ function App() {
 
                 <AddSubscriptionModal
                     isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
+                    onClose={handleCloseModal}
                     onAdd={addSubscription}
+                    onUpdate={updateSubscription}
+                    editingSubscription={editingSubscription}
                 />
             </div>
         </Router>

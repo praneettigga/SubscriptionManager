@@ -16,7 +16,7 @@ const BILLING_CYCLES = [
     { value: 'yearly', label: 'Yearly' },
 ];
 
-function AddSubscriptionModal({ isOpen, onClose, onAdd }) {
+function AddSubscriptionModal({ isOpen, onClose, onAdd, onUpdate, editingSubscription }) {
     const [formData, setFormData] = useState({
         name: '',
         cost: '',
@@ -29,6 +29,34 @@ function AddSubscriptionModal({ isOpen, onClose, onAdd }) {
     });
     const [aiSuggesting, setAiSuggesting] = useState(false);
     const [aiTip, setAiTip] = useState('');
+
+    // Pre-fill form when editing
+    useEffect(() => {
+        if (editingSubscription) {
+            setFormData({
+                name: editingSubscription.name || '',
+                cost: editingSubscription.cost?.toString() || '',
+                billing_cycle: editingSubscription.billing_cycle || 'monthly',
+                first_payment_date: editingSubscription.first_payment_date?.split('T')[0] || '',
+                category: editingSubscription.category || 'other',
+                status: editingSubscription.status || 'active',
+                is_shared: editingSubscription.is_shared || false,
+                shared_with: editingSubscription.shared_with || 1,
+            });
+        } else {
+            setFormData({
+                name: '',
+                cost: '',
+                billing_cycle: 'monthly',
+                first_payment_date: '',
+                category: 'other',
+                status: 'active',
+                is_shared: false,
+                shared_with: 1,
+            });
+        }
+        setAiTip('');
+    }, [editingSubscription, isOpen]);
 
     // Debounced AI suggestion for category
     useEffect(() => {
@@ -68,12 +96,18 @@ function AddSubscriptionModal({ isOpen, onClose, onAdd }) {
         e.preventDefault();
         if (!formData.name || !formData.cost) return;
 
-        onAdd({
+        const subscriptionData = {
             ...formData,
             cost: parseFloat(formData.cost),
             is_shared: formData.is_shared,
             shared_with: formData.is_shared ? parseInt(formData.shared_with) : 1,
-        });
+        };
+
+        if (editingSubscription) {
+            onUpdate(editingSubscription.id, subscriptionData);
+        } else {
+            onAdd(subscriptionData);
+        }
 
         // Reset form
         setFormData({
@@ -109,16 +143,16 @@ function AddSubscriptionModal({ isOpen, onClose, onAdd }) {
 
                     {/* Modal */}
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg z-50"
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto"
                     >
-                        <div className="glass rounded-2xl p-6 mx-4">
+                        <div className="glass rounded-2xl p-6 w-full max-w-lg max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
                             {/* Header */}
                             <div className="flex items-center justify-between mb-6">
                                 <h2 className="text-2xl font-bold text-white">
-                                    Add Subscription
+                                    {editingSubscription ? 'Edit Subscription' : 'Add Subscription'}
                                 </h2>
                                 <button
                                     onClick={onClose}
@@ -289,8 +323,8 @@ function AddSubscriptionModal({ isOpen, onClose, onAdd }) {
                                                         type="button"
                                                         onClick={() => setFormData(prev => ({ ...prev, shared_with: num }))}
                                                         className={`w-10 h-10 rounded-lg font-medium transition-colors ${formData.shared_with === num
-                                                                ? 'bg-primary-600 text-white'
-                                                                : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600'
+                                                            ? 'bg-primary-600 text-white'
+                                                            : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600'
                                                             }`}
                                                     >
                                                         {num}

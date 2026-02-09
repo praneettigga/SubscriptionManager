@@ -190,10 +190,10 @@ function CalendarPage({ subscriptions }) {
                 </div>
 
                 {/* Calendar Grid */}
-                <div className="grid grid-cols-7 gap-2">
+                <div className="grid grid-cols-7 gap-1">
                     {/* Empty cells for days before first day of month */}
                     {Array.from({ length: firstDayOfMonth }).map((_, i) => (
-                        <div key={`empty-${i}`} className="aspect-square" />
+                        <div key={`empty-${i}`} className="h-12" />
                     ))}
 
                     {/* Days of the month */}
@@ -210,11 +210,11 @@ function CalendarPage({ subscriptions }) {
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: i * 0.01 }}
                                 onClick={() => setSelectedDay(selectedDay === day ? null : day)}
-                                className={`aspect-square rounded-xl p-2 flex flex-col items-center justify-center relative transition-all ${isToday(day)
-                                        ? 'ring-2 ring-primary-500 bg-primary-600/20'
-                                        : selectedDay === day
-                                            ? 'bg-zinc-700'
-                                            : 'hover:bg-zinc-800'
+                                className={`h-12 rounded-lg p-1 flex flex-col items-center justify-center relative transition-all ${isToday(day)
+                                    ? 'ring-2 ring-primary-500 bg-primary-600/20'
+                                    : selectedDay === day
+                                        ? 'bg-zinc-700'
+                                        : 'hover:bg-zinc-800'
                                     } ${intensity === 3 ? 'bg-rose-500/30' :
                                         intensity === 2 ? 'bg-amber-500/20' :
                                             intensity === 1 ? 'bg-emerald-500/15' : ''
