@@ -25,6 +25,7 @@ ALTER TABLE subscriptions ENABLE ROW LEVEL SECURITY;
 
 -- Create a policy that allows all operations (for demo purposes)
 -- In production, you would want user-specific policies
+DROP POLICY IF EXISTS "Allow all operations" ON subscriptions;
 CREATE POLICY "Allow all operations" ON subscriptions
     FOR ALL
     USING (true)
@@ -67,6 +68,7 @@ CREATE TABLE IF NOT EXISTS user_settings (
 ALTER TABLE user_settings ENABLE ROW LEVEL SECURITY;
 
 -- Policy for user_settings (allow all for demo)
+DROP POLICY IF EXISTS "Allow all operations on user_settings" ON user_settings;
 CREATE POLICY "Allow all operations on user_settings" ON user_settings
     FOR ALL
     USING (true)
