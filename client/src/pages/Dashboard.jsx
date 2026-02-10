@@ -74,20 +74,9 @@ function Dashboard({ subscriptions, loading, onAddClick, budget, onUpdateBudget 
     return (
         <div className="animate-fade-in">
             {/* Header */}
-            <div className="flex items-center justify-between mb-8">
-                <div>
-                    <h1 className="text-3xl font-bold text-white">Dashboard</h1>
-                    <p className="text-zinc-400 mt-1">Overview of your subscriptions</p>
-                </div>
-                <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={onAddClick}
-                    className="flex items-center gap-2 bg-primary-600 hover:bg-primary-500 text-white font-medium py-2.5 px-5 rounded-xl transition-colors"
-                >
-                    <Plus size={18} />
-                    Add New
-                </motion.button>
+            <div className="mb-8">
+                <h1 className="text-3xl font-bold text-white">Dashboard</h1>
+                <p className="text-zinc-400 mt-1">Overview of your subscriptions</p>
             </div>
 
             {/* Stats Grid */}
